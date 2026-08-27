@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahul Foods - Owner Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--primary:#ff6b35;--primary-dark:#e55a2b;--success:#28a745;--warning:#ffc107;--danger:#dc3545;--info:#17a2b8;--dark:#333;--light:#f5f5f5;--white:#fff;--shadow:0 2px 4px rgba(0,0,0,.1);--shadow-lg:0 4px 8px rgba(0,0,0,.15);--radius:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:var(--light);color:var(--dark);line-height:1.6}
+.login-screen{display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#ff6b35,#ff8c5a)}
+.login-container{background:#fff;padding:2rem;border-radius:var(--radius);width:90%;max-width:400px;box-shadow:var(--shadow-lg)}
+.login-container h2{text-align:center;margin-bottom:2rem;color:var(--primary);font-size:2rem}
+.form-group{margin-bottom:1rem}.form-group label{display:block;margin-bottom:.5rem;font-weight:600}
+.form-group input{width:100%;padding:.75rem;border:2px solid #ddd;border-radius:8px;font-size:1rem}
+.form-group input:focus,.search-box input:focus{outline:none;border-color:var(--primary)}
+.login-btn{width:100%;padding:.75rem;background:var(--primary);color:#fff;border:none;border-radius:25px;cursor:pointer;font-size:1.1rem;font-weight:600}
+.login-btn:hover{background:var(--primary-dark)}.login-btn:disabled{background:#ccc;cursor:not-allowed}
+.error-message{color:var(--danger);text-align:center;margin-top:.5rem;display:none}
+.dashboard{display:none}.dashboard-nav{background:#fff;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
+.nav-brand h2{color:var(--primary);font-size:1.5rem}.nav-actions{display:flex;align-items:center;gap:1rem}.admin-email{color:#666;font-size:.9rem}
+.logout-btn{background:var(--danger);color:#fff;border:none;padding:.5rem 1rem;border-radius:25px;cursor:pointer;font-weight:600}
+.stats-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding:2rem}
+.stat-card{background:#fff;padding:1.5rem;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center}
+.stat-card h3{color:#666;font-size:.9rem;margin-bottom:.5rem;text-transform:uppercase}.stat-value{font-size:2rem;font-weight:bold}.stat-value.pending{color:var(--warning)}.stat-value.revenue{color:var(--success)}
+.filters-container{padding:0 2rem 1rem}.search-box{margin-bottom:1rem}.search-box input{width:100%;padding:.75rem;border:2px solid #ddd;border-radius:8px;font-size:1rem}
+.filter-buttons{display:flex;flex-wrap:wrap;gap:.5rem}.filter-btn{background:#fff;border:2px solid #ddd;padding:.5rem 1rem;border-radius:25px;cursor:pointer;font-weight:600;white-space:nowrap}
+.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.orders-container{padding:0 2rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+.order-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);cursor:pointer;overflow:hidden}.order-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.order-card-header{display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid #eee;background:#fafafa}
+.order-id{font-weight:bold;color:var(--primary)}.status-badge{padding:.25rem .75rem;border-radius:20px;font-size:.8rem;font-weight:600}
+.status-pending{background:#fff3cd;color:#856404}.status-confirmed{background:#cce5ff;color:#004085}.status-preparing{background:#d1ecf1;color:#0c5460}.status-ready{background:#d4edda;color:#155724}.status-delivered{background:#28a745;color:#fff}.status-cancelled{background:#f8d7da;color:#721c24}
+.order-card-body{padding:1rem}.order-info strong{font-size:1.1rem}.order-info p{color:#666;font-size:.9rem;margin:.25rem 0}.order-items-preview{background:#f9f9f9;padding:.5rem;border-radius:5px;margin:.5rem 0;font-size:.9rem}.order-total{font-size:1.25rem;font-weight:bold;color:var(--primary)}
+.order-card-footer{padding:.75rem 1rem;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:.9rem;color:#666}
+.empty-state{text-align:center;padding:3rem;color:#666;grid-column:1/-1}.empty-state .icon{font-size:4rem;margin-bottom:1rem}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:1000}
+.modal-content{background:#fff;margin:2% auto;padding:2rem;width:90%;max-width:600px;border-radius:var(--radius);max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}.modal-header h3{font-size:1.5rem}
+.close-btn{background:none;border:none;font-size:2rem;cursor:pointer;color:#999}.order-details-section,.status-update-section{margin-bottom:1.5rem;padding:1rem;background:#f9f9f9;border-radius:8px}
+.order-details-section h4,.status-update-section h4{color:var(--primary);margin-bottom:.5rem}.items-list{margin:1rem 0}.item-row{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #eee}
+.status-buttons{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}.status-update-btn{background:var(--primary);color:#fff;border:none;padding:.5rem 1rem;border-radius:25px;cursor:pointer;font-weight:600}
+.notification{position:fixed;top:20px;right:20px;background:var(--success);color:#fff;padding:1rem 1.5rem;border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:2000;display:none}
+@media(max-width:768px){.dashboard-nav{padding:.75rem 1rem}.nav-brand h2{font-size:1.2rem}.admin-email{display:none}.stats-container{grid-template-columns:repeat(2,1fr);padding:1rem;gap:.75rem}.stat-card{padding:1rem}.stat-value{font-size:1.5rem}.filters-container{padding:0 1rem .75rem}.orders-container{grid-template-columns:1fr;padding:0 1rem 1rem;gap:.75rem}.modal-content{margin:5% auto;padding:1.5rem;width:95%}}
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-screen"><div class="login-container">
+<h2>🔐 Owner Login</h2>
+<form id="loginForm">
+<div class="form-group"><label>Email</label><input type="email" id="email" required placeholder="Enter your email"></div>
+<div class="form-group"><label>Password</label><input type="password" id="password" required placeholder="Enter your password"></div>
+<button type="submit" class="login-btn" id="loginBtn">Login</button>
+<div class="error-message" id="loginError">Invalid email or password</div>
+</form></div></div>
+
+<div id="dashboard" class="dashboard">
+<nav class="dashboard-nav"><div class="nav-brand"><h2>🍽️ Rahul Foods Admin</h2></div><div class="nav-actions"><span class="admin-email" id="adminEmail"></span><button class="logout-btn" onclick="logout()">Logout</button></div></nav>
+<div class="stats-container">
+<div class="stat-card"><h3>Total Orders</h3><div class="stat-value" id="totalOrders">0</div></div>
+<div class="stat-card"><h3>Today's Orders</h3><div class="stat-value" id="todayOrders">0</div></div>
+<div class="stat-card"><h3>Pending</h3><div class="stat-value pending" id="pendingOrders">0</div></div>
+<div class="stat-card"><h3>Today's Revenue</h3><div class="stat-value revenue" id="todayRevenue">₹0</div></div>
+</div>
+<div class="filters-container"><div class="search-box"><input type="search" id="searchInput" placeholder="🔍 Search by Order ID, Name, or Phone..." oninput="displayOrders()"></div>
+<div class="filter-buttons">
+<button class="filter-btn active" onclick="setFilter('all',this)">All Orders</button><button class="filter-btn" onclick="setFilter('Pending',this)">Pending</button><button class="filter-btn" onclick="setFilter('Confirmed',this)">Confirmed</button><button class="filter-btn" onclick="setFilter('Preparing',this)">Preparing</button><button class="filter-btn" onclick="setFilter('Ready',this)">Ready</button><button class="filter-btn" onclick="setFilter('Delivered',this)">Delivered</button><button class="filter-btn" onclick="setFilter('Cancelled',this)">Cancelled</button>
+</div></div>
+<div class="orders-container" id="ordersContainer"></div>
+</div>
+
+<div id="orderModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Order Details</h3><button class="close-btn" onclick="closeOrderModal()">&times;</button></div><div id="orderDetails"></div></div></div>
+<div id="notification" class="notification"></div>
+
+<script>
+const SUPABASE_URL='https://yiqxikrgxtozskahdkat.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_HQWK_hYkY6BgS3KiQTiSgQ_qgKyXrI2';
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let currentUser=null,allOrders=[],currentFilter='all',ordersSubscription=null;
+
+document.addEventListener('DOMContentLoaded',async()=>{
+ const {data:{session}}=await supabase.auth.getSession();
+ if(session){currentUser=session.user;showDashboard();loadOrders();subscribeToOrders();}
+});
+
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const btn=document.getElementById('loginBtn'),err=document.getElementById('loginError');
+ btn.disabled=true;btn.textContent='Logging in...';err.style.display='none';
+ try{
+  const {data,error}=await supabase.auth.signInWithPassword({email:email.value,password:password.value});
+  if(error)throw error;
+  currentUser=data.user;showDashboard();loadOrders();subscribeToOrders();
+ }catch(x){err.style.display='block';err.textContent='Invalid email or password';}
+ finally{btn.disabled=false;btn.textContent='Login';}
+});
+
+function showDashboard(){loginScreen.style.display='none';dashboard.style.display='block';adminEmail.textContent=currentUser.email}
+async function logout(){await supabase.auth.signOut();currentUser=null;allOrders=[];if(ordersSubscription)ordersSubscription.unsubscribe();loginScreen.style.display='flex';dashboard.style.display='none';loginForm.reset()}
+async function loadOrders(){
+ try{
+  const {data,error}=await supabase.from('orders').select('*').order('created_at',{ascending:false});
+  if(error)throw error;allOrders=data||[];updateStats();displayOrders();
+ }catch(e){console.error(e);showNotification('Failed to load orders','error')}
+}
+function subscribeToOrders(){
+ if(ordersSubscription)ordersSubscription.unsubscribe();
+ ordersSubscription=supabase.channel('orders-channel').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>loadOrders()).subscribe();
+}
+function setFilter(status,button){currentFilter=status;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));button.classList.add('active');displayOrders()}
+function displayOrders(){
+ const c=document.getElementById('ordersContainer'),q=document.getElementById('searchInput').value.toLowerCase().trim();
+ let list=allOrders.filter(o=>(currentFilter==='all'||o.status===currentFilter)&&(!q||JSON.stringify(o).toLowerCase().includes(q)));
+ if(!list.length){c.innerHTML='<div class="empty-state"><div class="icon">📭</div><h3>No Orders Found</h3><p>No orders match your search or filter.</p></div>';return}
+ c.innerHTML=list.map(createOrderCard).join('');
+}
+function createOrderCard(o){
+ const id=o.id??o.order_id??'N/A',status=o.status||'Pending',name=o.customer_name||o.name||'Customer',phone=o.phone||o.customer_phone||'No phone',total=Number(o.total??o.total_amount??0),created=o.created_at?new Date(o.created_at).toLocaleString('en-IN'):'';
+ let items=Array.isArray(o.items)?o.items.map(i=>`${i.quantity||1} × ${i.name||'Item'}`).join(', '):typeof o.items==='string'?o.items:'Order items';
+ return `<div class="order-card" onclick="openOrderModal('${esc(String(id))}')"><div class="order-card-header"><span class="order-id">#${esc(String(id))}</span><span class="status-badge status-${status.toLowerCase()}">${esc(status)}</span></div><div class="order-card-body"><div class="order-info"><strong>${esc(name)}</strong><p>📞 ${esc(phone)}</p></div><div class="order-items-preview">${esc(items)}</div><div class="order-total">₹${total.toLocaleString('en-IN')}</div></div><div class="order-card-footer"><span>${esc(created)}</span><span>View →</span></div></div>`;
+}
+function openOrderModal(id){
+ const o=allOrders.find(x=>String(x.id??x.order_id)===String(id));if(!o)return;
+ const name=o.customer_name||o.name||'Customer',phone=o.phone||o.customer_phone||'N/A',address=o.address||o.delivery_address||'N/A',total=Number(o.total??o.total_amount??0);
+ const items=Array.isArray(o.items)?o.items.map(i=>`<div class="item-row"><span>${esc(i.name||'Item')} × ${i.quantity||1}</span><strong>₹${Number(i.price||0)*Number(i.quantity||1)}</strong></div>`).join(''):'<div class="item-row"><span>Order items</span><strong>—</strong></div>';
+ orderDetails.innerHTML=`<div class="order-details-section"><h4>Customer</h4><p><strong>Name:</strong> ${esc(name)}</p><p><strong>Phone:</strong> ${esc(phone)}</p><p><strong>Address:</strong> ${esc(address)}</p></div><div class="order-details-section"><h4>Items</h4><div class="items-list">${items}</div><div class="order-total">Total: ₹${total.toLocaleString('en-IN')}</div></div><div class="status-update-section"><h4>Update Order Status</h4><div class="status-buttons">${['Pending','Confirmed','Preparing','Ready','Delivered','Cancelled'].map(s=>`<button class="status-update-btn" onclick="updateOrderStatus('${esc(String(id))}','${s}')">${s}</button>`).join('')}</div></div>`;
+ orderModal.style.display='block';
+}
+function closeOrderModal(){orderModal.style.display='none'}
+async function updateOrderStatus(id,status){
+ try{
+  const o=allOrders.find(x=>String(x.id??x.order_id)===String(id));if(!o)return;
+  const key=o.id!==undefined?'id':'order_id';
+  const {error}=await supabase.from('orders').update({status}).eq(key,o[key]);if(error)throw error;
+  showNotification(`Order updated to ${status}`);closeOrderModal();await loadOrders();
+ }catch(e){console.error(e);showNotification('Failed to update order','error')}
+}
+function updateStats(){
+ const today=new Date().toLocaleDateString('en-IN');
+ const todays=allOrders.filter(o=>o.created_at&&new Date(o.created_at).toLocaleDateString('en-IN')===today);
+ const pending=allOrders.filter(o=>String(o.status).toLowerCase()==='pending');
+ const revenue=todays.reduce((s,o)=>s+Number(o.total??o.total_amount??0),0);
+ totalOrders.textContent=allOrders.length;todayOrders.textContent=todays.length;pendingOrders.textContent=pending.length;todayRevenue.textContent='₹'+revenue.toLocaleString('en-IN');
+}
+function showNotification(message,type='success'){notification.textContent=message;notification.style.background=type==='error'?'var(--danger)':'var(--success)';notification.style.display='block';setTimeout(()=>notification.style.display='none',3000)}
+function esc(v){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+window.addEventListener('click',e=>{if(e.target===orderModal)closeOrderModal()});
+supabase.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){currentUser=null;loginScreen.style.display='flex';dashboard.style.display='none'}});
+</script>
+</body>
+</html>

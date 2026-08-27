@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Rahul Foods | Ghanapuram, Ghatkesar</title>
+<meta name="description" content="Rahul Foods restaurant in Ghanapuram, Ghatkesar. View our menu and contact us on WhatsApp.">
+<style>
+:root{--bg:#080808;--card:#111;--gold:#d7b34a;--gold2:#f3d77a;--white:#fff;--muted:#aaa}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--white);font-family:Georgia,serif}
+nav{position:fixed;z-index:50;top:0;width:100%;background:rgba(8,8,8,.9);backdrop-filter:blur(12px);border-bottom:1px solid #2b2412}
+.nav{max-width:1180px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:25px;font-weight:700}.brand b{color:var(--gold)}
+.navlinks{display:flex;gap:24px;font:14px Arial,sans-serif}.navlinks a:hover{color:var(--gold)}
+.hero{min-height:100vh;display:grid;place-items:center;text-align:center;padding:100px 20px 60px;background:radial-gradient(circle,#32270d 0,transparent 38%),linear-gradient(#0b0b0b,#080808)}
+.kicker{color:var(--gold2);font:12px Arial,sans-serif;letter-spacing:4px;text-transform:uppercase}.hero h1{font-size:clamp(58px,12vw,120px);line-height:.9;margin:18px 0;letter-spacing:-5px}.hero h1 span{color:var(--gold)}.hero p{max-width:650px;margin:25px auto;color:var(--muted);font:17px/1.7 Arial,sans-serif}
+.buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.btn{padding:14px 24px;border:1px solid var(--gold);font:bold 14px Arial,sans-serif}.btn.primary{background:var(--gold);color:#090909}.btn:hover{transform:translateY(-2px)}
+section{padding:90px 20px}.wrap{max-width:1150px;margin:auto}.eyebrow{color:var(--gold);font:12px Arial,sans-serif;letter-spacing:3px;text-transform:uppercase}.title{font-size:clamp(36px,6vw,58px);margin:8px 0 14px}.sub{color:var(--muted);font:15px/1.7 Arial,sans-serif;max-width:760px}
+.about{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}.story{border:1px solid #282828;background:linear-gradient(145deg,#161616,#0d0d0d);padding:38px}.story h3{font-size:29px;margin:0 0 10px;color:var(--gold2)}
+.menu-head{display:flex;justify-content:space-between;gap:20px;align-items:end;flex-wrap:wrap}.search{background:#111;border:1px solid #333;color:white;padding:13px 15px;border-radius:4px;min-width:240px}
+.tabs{display:flex;gap:8px;overflow:auto;padding:25px 0 12px;scrollbar-width:none}.tabs button{white-space:nowrap;background:#111;border:1px solid #2c2c2c;color:#ddd;padding:10px 15px;cursor:pointer;border-radius:20px}.tabs button.active,.tabs button:hover{border-color:var(--gold);color:var(--gold2)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.item{background:#101010;border:1px solid #222;padding:19px;min-height:95px;transition:.2s}.item:hover{border-color:#7c6424;transform:translateY(-2px)}.item h3{font-size:17px;margin:0 0 7px}.price{color:var(--gold2);font:bold 14px Arial,sans-serif}.note{color:#777;font:12px Arial,sans-serif;margin-top:5px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:35px}.feature{background:#101010;border-top:1px solid var(--gold);padding:30px}.feature h3{margin:8px 0;font-size:21px}.feature p{color:var(--muted);font:14px/1.6 Arial,sans-serif}
+.contact{background:linear-gradient(135deg,#191407,#0c0c0c);text-align:center;border-top:1px solid #3a2d10;border-bottom:1px solid #3a2d10}.contactcards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:30px}.contactcard{background:#0f0f0f;padding:25px;border:1px solid #252525}.contactcard small{display:block;color:var(--gold);font:11px Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}.contactcard a,.contactcard span{font:15px Arial,sans-serif;color:#eee}
+footer{text-align:center;padding:28px 20px;color:#777;font:12px Arial,sans-serif;border-top:1px solid #1d1d1d}
+@media(max-width:760px){.navlinks{display:none}.about{grid-template-columns:1fr}.grid,.features,.contactcards{grid-template-columns:1fr}.hero h1{letter-spacing:-3px}section{padding:70px 17px}.search{width:100%;min-width:0}}
+
+.navbtn,.cartbtn{background:#111;color:#eee;border:1px solid #3b321c;padding:9px 12px;border-radius:5px;cursor:pointer;font:12px Arial,sans-serif}
+.cartbtn{border-color:var(--gold);color:var(--gold2)}
+.cartbtn span{display:inline-block;min-width:18px}
+.item{position:relative}.addbtn{margin-top:12px;background:var(--gold);color:#090909;border:0;padding:9px 12px;font:bold 12px Arial,sans-serif;border-radius:4px;cursor:pointer}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:100;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex}.modalbox{width:min(620px,100%);max-height:90vh;overflow:auto;background:#111;border:1px solid #493b18;padding:24px;border-radius:8px}
+.modalbox h2{margin-top:0;color:var(--gold2)}.close{float:right;background:none;border:0;color:#aaa;font-size:24px;cursor:pointer}
+.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}.field label{font:12px Arial;color:#bbb}.field input,.field textarea,.field select{background:#090909;border:1px solid #333;color:#fff;padding:11px;border-radius:4px;font:14px Arial}
+.formrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cartrow{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:12px 0;border-bottom:1px solid #242424;font:13px Arial}.qty button{background:#222;color:#fff;border:1px solid #444;width:28px;height:28px;cursor:pointer}.total{font:bold 18px Arial;color:var(--gold2);text-align:right;margin:18px 0}.empty{color:#888;text-align:center;padding:30px;font:14px Arial}.success{padding:15px;background:#132016;border:1px solid #2b6338;color:#bce8c6;margin:12px 0;font:14px Arial}
+.notify-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.notify-actions a{display:inline-block;text-decoration:none}
+.accountbar{position:fixed;right:16px;bottom:16px;z-index:60;background:#111;border:1px solid #3b321c;padding:10px 14px;border-radius:6px;font:12px Arial;color:#ccc;display:none}
+.accountbar button{margin-left:8px;background:none;color:var(--gold2);border:0;cursor:pointer}
+@media(max-width:760px){.navlinks{display:none}.formrow{grid-template-columns:1fr}.cartrow{grid-template-columns:1fr auto auto}.accountbar{right:10px;bottom:10px}}
+
+.mobile-cart-btn{
+  display:none;
+  position:fixed;
+  right:14px;
+  top:70px;
+  z-index:70;
+  background:var(--gold);
+  color:#090909;
+  border:1px solid var(--gold2);
+  padding:11px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  font:bold 13px Arial,sans-serif;
+  box-shadow:0 4px 18px rgba(0,0,0,.45)
+}
+.mobile-cart-btn span{
+  display:inline-block;
+  min-width:18px;
+  margin-left:3px
+}
+@media(max-width:760px){
+  .mobile-cart-btn{display:block}
+}
+
+</style>
+</head>
+<body>
+<nav><div class="nav"><a class="brand" href="#home">Rahul <b>Foods</b></a><div class="navlinks">
+<a href="#home">Home</a><a href="#about">About</a><a href="#menu">Menu</a><a href="#why">Why Us</a><a href="#contact">Contact</a>
+<button class="navbtn" onclick="openAuth()">Login / Register</button>
+<button class="cartbtn" onclick="openCart()">🛒 Cart <span id="cartCount">0</span></button>
+</div></div>
+<button class="mobile-cart-btn" onclick="openCart()" aria-label="Open shopping cart">
+  🛒 <span id="mobileCartCount">0</span>
+</button>
+</nav>
+
+<header class="hero" id="home"><div>
+<div class="kicker">Ghanapuram • Ghatkesar</div>
+<h1>Rahul <span>Foods</span></h1>
+<p>Delicious food, warm hospitality and a menu made for every kind of craving. Discover Rahul Foods in Ghanapuram, Ghatkesar.</p>
+<div class="buttons"><a class="btn primary" href="#menu">View Full Menu</a><a class="btn" href="https://wa.me/919948099296?text=Hello%20Rahul%20Foods%2C%20I%20would%20like%20to%20know%20more." target="_blank">WhatsApp</a></div>
+</div></header>
+
+<section id="about"><div class="wrap about"><div><div class="eyebrow">Welcome</div><h2 class="title">Good food. Good moments.</h2><p class="sub">Rahul Foods is a restaurant serving a wide selection of vegetarian and non-vegetarian favourites, breads, rolls, gravies, starters and thalis.</p><p class="sub">Visit us at Ghanapuram, Ghatkesar and enjoy a satisfying meal with family and friends.</p></div><div class="story"><h3>Rahul Foods</h3><p class="sub">Our menu brings together classic Indian favourites and popular restaurant specials, with options for quick bites and full meals.</p></div></div></section>
+
+<section id="menu"><div class="wrap">
+<div class="menu-head"><div><div class="eyebrow">Our Menu</div><h2 class="title">Choose your favourite.</h2><p class="sub">Prices below are taken from the menu images you provided.</p></div><input id="search" class="search" placeholder="Search menu..."></div>
+<div class="tabs" id="tabs"></div><div class="grid" id="items"></div>
+</div></section>
+
+<section id="why"><div class="wrap"><div class="eyebrow">The Rahul Foods Difference</div><h2 class="title">Why choose us?</h2><div class="features">
+<div class="feature"><div style="font-size:28px">✦</div><h3>Wide Selection</h3><p>From rolls and starters to breads, main courses and thalis.</p></div>
+<div class="feature"><div style="font-size:28px">♨</div><h3>Something for Everyone</h3><p>Vegetarian and non-vegetarian options for different tastes.</p></div>
+<div class="feature"><div style="font-size:28px">♡</div><h3>Great for Sharing</h3><p>A menu suited for family meals, friends and casual dining.</p></div>
+</div></div></section>
+
+<section class="contact" id="contact"><div class="wrap"><div class="eyebrow">Visit Rahul Foods</div><h2 class="title">Let's make your meal memorable.</h2><p class="sub" style="margin:auto">Ghatkesar, Ghanapuram, near temple, 501301</p><div class="contactcards">
+<div class="contactcard"><small>Location</small><span>Ghatkesar, Ghanapuram, near temple, 501301</span></div>
+<div class="contactcard"><small>Call</small><a href="tel:+919948099296">+91 99480 99296</a></div>
+<div class="contactcard"><small>WhatsApp</small><a href="https://wa.me/919948099296" target="_blank">Chat with Rahul Foods</a></div>
+</div><div class="buttons" style="margin-top:28px"><a class="btn primary" href="tel:+919948099296">Call Now</a><a class="btn" href="https://wa.me/919948099296" target="_blank">WhatsApp Us</a></div></div></section>
+
+<!-- Customer authentication -->
+<div class="modal" id="authModal">
+  <div class="modalbox">
+    <button class="close" onclick="closeModal('authModal')">×</button>
+    <h2 id="authTitle">Login</h2>
+    <div id="authMessage"></div>
+    <div id="registerFields" style="display:none">
+      <div class="field"><label>Full name</label><input id="regName" autocomplete="name"></div>
+      <div class="field"><label>Mobile number</label><input id="regPhone" autocomplete="tel"></div>
+    </div>
+    <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email"></div>
+    <div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password"></div>
+    <button class="btn primary" style="width:100%;cursor:pointer" onclick="submitAuth()" id="authSubmit">Login</button>
+    <p style="font:13px Arial;color:#999;text-align:center;margin-top:16px">
+      <span id="authSwitchText">New customer?</span>
+      <button onclick="toggleAuthMode()" id="authSwitch" style="background:none;border:0;color:var(--gold2);cursor:pointer">Create account</button>
+    </p>
+  </div>
+</div>
+
+<!-- Cart / checkout -->
+<div class="modal" id="cartModal">
+  <div class="modalbox">
+    <button class="close" onclick="closeModal('cartModal')">×</button>
+    <h2>Your Cart</h2>
+    <div id="cartRows"></div>
+    <div class="total" id="cartTotal">Total: ₹0</div>
+    <button class="btn primary" style="width:100%;cursor:pointer" onclick="startCheckout()">Proceed to checkout</button>
+  </div>
+</div>
+
+<div class="modal" id="checkoutModal">
+  <div class="modalbox">
+    <button class="close" onclick="closeModal('checkoutModal')">×</button>
+    <h2>Place Your Order</h2>
+    <div id="checkoutMessage"></div>
+    <form name="orders" method="POST" data-netlify="true" action="/" netlify-honeypot="bot-field" id="orderForm" onsubmit="submitOrder(event)">
+      <input type="hidden" name="form-name" value="orders">
+      <input type="hidden" name="bot-field">
+      <input type="hidden" name="order_details" id="orderDetails">
+      <input type="hidden" name="order_total" id="orderTotal">
+      <input type="hidden" name="customer_email" id="customerEmail">
+      <div class="formrow">
+        <div class="field"><label>Name</label><input name="name" id="orderName" required></div>
+        <div class="field"><label>Mobile</label><input name="phone" id="orderPhone" required></div>
+      </div>
+      <div class="field"><label>Email</label><input name="email" id="orderEmail" type="email" required></div>
+      <div class="field"><label>Order type</label><select name="order_type" id="orderType"><option>Delivery</option><option>Pickup</option></select></div>
+      <div class="field"><label>Delivery / pickup address</label><textarea name="address" id="orderAddress" rows="3" required></textarea></div>
+      <div class="field"><label>Notes (optional)</label><textarea name="notes" id="orderNotes" rows="2"></textarea></div>
+      <button class="btn primary" style="width:100%;cursor:pointer" type="submit">Place Order</button>
+      <p style="font:12px/1.5 Arial;color:#777;margin:12px 0 0">Your order is saved securely in the Rahul Foods database. You can also send the order directly to Rahul Foods on WhatsApp.</p>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="ownerModal">
+  <div class="modalbox">
+    <button class="close" onclick="closeModal('ownerModal')">×</button>
+    <h2>Owner Order Dashboard</h2>
+    <p style="font:13px Arial;color:#999">Orders stored on this browser are shown here. Netlify form submissions are the owner notification channel.</p>
+    <div id="ownerOrders"></div>
+  </div>
+</div>
+
+<div class="accountbar" id="accountBar"><span id="accountText"></span><button onclick="logout()">Logout</button></div>
+<footer>© 2026 Rahul Foods • Ghatkesar, Ghanapuram, near temple, 501301 • <button onclick="openOwner()" style="background:none;border:0;color:#777;cursor:pointer">Owner</button></footer>
+
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://yiqxikrgxtozskahdkat.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_HQWK_hYkY6BgS3KiQTiSgQ_qgKyXrI2";
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+</script>
+
+<script>
+const data={
+"🍞 Tandoor Bread":[
+["Roti","₹20"],["Butter Roti","₹30"],["Jawar Roti","₹10"],["Chapati","₹10"],["Plain Nan","₹40"],["Plain Paratha","₹30"],["Butter Paratha","₹40"],["Butter Nan","₹60"],["Garlic Nan","₹80"],["Cheese Nan","₹120"],["Cheese Garlic Nan","₹140"],["Lacha Paratha","₹60"],["Plain Kulcha","₹30"],["Butter Kulcha","₹40"],["Onion Kulcha","₹50"]],
+"🥘 Veg Main Course":[
+["Dal Fry","₹80"],["Dal Tadka","₹100"],["Dal Kolhapuri","₹110"],["Aloo Jeera","₹120"],["Aloo Gobi","₹140"],["Aloo Palak","₹160"],["Kaju Masala","₹180"],["Mix Vegetable","₹160"],["Veg Makhniwala","₹170"],["Veg Kadai","₹150"],["Veg Kolhapuri","₹160"],["Palak Paneer","₹180"],["Paneer Makhniwala","₹190"],["Kadai Paneer","₹170"],["Paneer Tikka Masala","₹220"],["Paneer Masala","₹180"],["Paneer Kolhapuri","₹190"],["Mutter Paneer","₹180"],["Mutter Mushroom","₹170"],["Mushroom Masala","₹150"]],
+"🍗 Non-Veg Main Course":[
+["Chicken Curry","₹140"],["Chicken Masala","₹160"],["Chicken Tikka Masala","₹220"],["Chicken Hyderabadi","₹190"],["Butter Chicken","₹240"],["Chicken Kolhapuri","₹170"],["Egg Masala","₹100"],["Egg Kolhapuri","₹120"],["Egg Curry","₹90"],["Mutton Masala","₹240"],["Mutton Hyderabadi","₹230"],["Mutton Kolhapuri","₹220"]],
+"🍱 Thali":[["Veg Thali","₹140"],["Egg Thali","₹130"],["Chicken Thali","₹160"],["Mutton Thali","₹220"]],
+"🌯 Rolls":[
+["Veg Roll","₹30"],["Egg Roll","₹30"],["Double Egg Roll","₹40"],["Egg Veg Roll","₹40"],["Chicken Roll","₹50"],["Mushroom Roll","₹50"],["Veg Cheese Roll","₹60"],["Egg Paneer Roll","₹60"],["Veg Paneer Roll","₹70"],["Double Paneer Roll","₹80"],["Double Mushroom Roll","₹80"],["Chilly Chicken Roll","₹80"],["Double Egg Paneer Roll","₹90"],["Double Egg Double Paneer Roll","₹80"],["Double Egg Double Chicken Roll","₹90"],["Double Paneer Chicken Roll","₹90"],["Double Paneer Double Chicken","₹110"]],
+"🥣 Dal":[["Dal Fry","Half ₹40 • Full ₹60"],["Dal Tadka","Half ₹50 • Full ₹80"]],
+"🍚 Paulo":[["Green Peas Paulo","₹60"],["Veg Paulo","₹60"],["Paneer Paulo","₹70"]],
+"🥦 Manchurian":[
+["Gobi Manchoorian","₹50"],["Gobi Chilly","₹60"],["Mushroom Manchoorian","₹50 / ₹90"],["Mushroom Chilly","₹60 / ₹100"],["Aloo Gobi Dry","₹80"],["Paneer Manchoorian","₹50 / ₹90"],["Baby Corn Chilly","₹80"],["Chilly Chicken","₹60 / ₹110"],["Paneer Chilly","₹60 / ₹110"]],
+"🍛 Non-Veg Gravy":[
+["Nawabi Chicken Masala","Half ₹70 • Full ₹130"],["Chicken Kassa","Half ₹60 • Full ₹100"],["Chicken Kaju Curry","Half ₹70 • Full ₹130"],["Badami Chicken","Half ₹70 • Full ₹130"],["Chicken Rara","Half ₹70 • Full ₹130"],["Chicken Patyala","Half ₹65 • Full ₹120"],["Chicken Jhalfrez","Half ₹70 • Full ₹130"],["Chicken Curry","Half ₹60 • Full ₹100"],["Chicken Masala","Half ₹60 • Full ₹100"],["Chicken Hyderabadi","Half ₹70 • Full ₹120"],["Kadai Chicken","Half ₹70 • Full ₹120"],["Chicken Kolapuri","Half ₹70 • Full ₹120"],["Chicken Butter Masala","Half ₹75 • Full ₹130"],["Chicken Punjabi","Half ₹70 • Full ₹120"],["Chicken Achari","Half ₹70 • Full ₹120"],["Chicken Dopiyza","Half ₹70 • Full ₹120"],["Chicken Bharta","Half ₹80 • Full ₹140"],["Spl Chicken Prince Masala","₹150"]],
+"🔥 Dry Starters":[
+["Kebab","₹40 / ₹80"],["Lolly Pop","₹90"],["Paneer 65","₹60 / ₹100"],["Chicken 65","₹60 / ₹100"],["Chicken Fry","₹60 / ₹110"],["Mushroom 65","₹50 / ₹90"],["Pepper Chicken","₹60 / ₹110"],["Mushroom Pepper","₹55 / ₹100"],["Lemon Chicken","₹70 / ₹130"],["Ginger Chicken","₹60 / ₹110"],["Garlic Chicken","₹60 / ₹110"],["Dargon Chicken","₹80 / ₹140"],["Chicken Chatpatha","₹130"],["Chicken Manchoorian","₹60 / ₹110"],["Crispy Chicken","₹130"]]
+};
+
+let active=Object.keys(data)[0];
+let cart=JSON.parse(localStorage.getItem('rf_cart')||'{}');
+let users=JSON.parse(localStorage.getItem('rf_users')||'{}');
+let currentUser=JSON.parse(localStorage.getItem('rf_current')||'null');
+let ownerOrders=JSON.parse(localStorage.getItem('rf_orders')||'[]');
+let authRegister=false;
+
+const tabs=document.getElementById('tabs'),items=document.getElementById('items'),search=document.getElementById('search');
+const rupee=s=>Number(String(s).replace(/[^\d.]/g,''))||0;
+
+function renderTabs(){
+  tabs.innerHTML=Object.keys(data).map(k=>`<button class="${k===active?'active':''}" onclick="active=${JSON.stringify(k)};render()">${k}</button>`).join('')
+}
+function render(){
+  renderTabs();
+  let q=search.value.toLowerCase();
+  let arr=data[active].filter(x=>x[0].toLowerCase().includes(q));
+  items.innerHTML=arr.length?arr.map(x=>`<article class="item"><h3>${x[0]}</h3><div class="price">${x[1]}</div><button class="addbtn" onclick='addToCart(${JSON.stringify(x[0])},${JSON.stringify(x[1])})'>Add to cart</button></article>`).join(''):'<p class="sub">No matching item found.</p>';
+}
+search.addEventListener('input',render);
+
+function saveCart(){localStorage.setItem('rf_cart',JSON.stringify(cart));updateCartCount()}
+function addToCart(name,price){let key=name+'|'+price;if(!cart[key])cart[key]={name,price,qty:0};cart[key].qty++;saveCart();showToast(name+' added to cart');}
+function updateCartCount(){
+  const count=Object.values(cart).reduce((s,x)=>s+x.qty,0);
+  const desktop=document.getElementById('cartCount');
+  const mobile=document.getElementById('mobileCartCount');
+  if(desktop) desktop.textContent=count;
+  if(mobile) mobile.textContent=count;
+}
+function cartTotal(){return Object.values(cart).reduce((s,x)=>s+rupee(x.price)*x.qty,0)}
+function openCart(){renderCart();openModal('cartModal')}
+function renderCart(){
+  let vals=Object.values(cart).filter(x=>x.qty>0);
+  document.getElementById('cartRows').innerHTML=vals.length?vals.map((x,i)=>`<div class="cartrow"><div><b>${x.name}</b><br><span style="color:#999">${x.price}</span></div><div class="qty"><button onclick='changeQty(${JSON.stringify(Object.keys(cart).find(k=>cart[k]===x))},-1)'>−</button> ${x.qty} <button onclick='changeQty(${JSON.stringify(Object.keys(cart).find(k=>cart[k]===x))},1)'>+</button></div><div>₹${rupee(x.price)*x.qty}</div><button onclick='removeCart(${JSON.stringify(Object.keys(cart).find(k=>cart[k]===x))})' style="background:none;border:0;color:#a66;cursor:pointer">×</button></div>`).join(''):'<div class="empty">Your cart is empty.<br>Add items from the menu first.</div>';
+  document.getElementById('cartTotal').textContent='Total: ₹'+cartTotal();
+}
+function changeQty(key,n){if(!cart[key])return;cart[key].qty+=n;if(cart[key].qty<=0)delete cart[key];saveCart();renderCart()}
+function removeCart(key){delete cart[key];saveCart();renderCart()}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function showToast(t){console.log(t)}
+
+function openAuth(){authRegister=false;updateAuthUI();openModal('authModal')}
+function toggleAuthMode(){authRegister=!authRegister;updateAuthUI()}
+function updateAuthUI(){
+  document.getElementById('authTitle').textContent=authRegister?'Create account':'Login';
+  document.getElementById('registerFields').style.display=authRegister?'block':'none';
+  document.getElementById('authSubmit').textContent=authRegister?'Register':'Login';
+  document.getElementById('authSwitchText').textContent=authRegister?'Already registered?':'New customer?';
+  document.getElementById('authSwitch').textContent=authRegister?'Login':'Create account';
+  document.getElementById('authMessage').innerHTML='';
+}
+function submitAuth(){
+  let email=document.getElementById('authEmail').value.trim().toLowerCase(), pass=document.getElementById('authPassword').value;
+  if(!email||!pass){document.getElementById('authMessage').innerHTML='<div class="success" style="background:#251414;border-color:#633">Enter email and password.</div>';return}
+  if(authRegister){
+    let name=document.getElementById('regName').value.trim(),phone=document.getElementById('regPhone').value.trim();
+    if(!name||!phone){document.getElementById('authMessage').innerHTML='<div class="success" style="background:#251414;border-color:#633">Enter your name and mobile number.</div>';return}
+    if(users[email]){document.getElementById('authMessage').innerHTML='<div class="success" style="background:#251414;border-color:#633">Account already exists. Please login.</div>';return}
+    users[email]={name,phone,password:pass};localStorage.setItem('rf_users',JSON.stringify(users));
+    currentUser={email,name,phone};localStorage.setItem('rf_current',JSON.stringify(currentUser));closeModal('authModal');updateAccountBar();
+  }else{
+    if(!users[email]||users[email].password!==pass){document.getElementById('authMessage').innerHTML='<div class="success" style="background:#251414;border-color:#633">Invalid email or password.</div>';return}
+    currentUser={email,name:users[email].name,phone:users[email].phone};localStorage.setItem('rf_current',JSON.stringify(currentUser));closeModal('authModal');updateAccountBar();
+  }
+}
+function logout(){currentUser=null;localStorage.removeItem('rf_current');updateAccountBar()}
+function updateAccountBar(){
+  let bar=document.getElementById('accountBar');
+  if(currentUser){bar.style.display='block';document.getElementById('accountText').textContent='👤 '+currentUser.name}
+  else bar.style.display='none';
+}
+
+function startCheckout(){
+  if(!Object.keys(cart).length){alert('Your cart is empty.');return}
+  if(!currentUser){closeModal('cartModal');openAuth();return}
+  closeModal('cartModal');
+  document.getElementById('orderName').value=currentUser.name||'';
+  document.getElementById('orderPhone').value=currentUser.phone||'';
+  document.getElementById('orderEmail').value=currentUser.email||'';
+  document.getElementById('customerEmail').value=currentUser.email||'';
+  openModal('checkoutModal');
+}
+function makeOrderId(){return 'RF-'+Date.now().toString(36).toUpperCase()}
+async function submitOrder(e){
+  e.preventDefault();
+
+  const submitButton = document.querySelector('#orderForm button[type="submit"]');
+  if(submitButton){
+    submitButton.disabled = true;
+    submitButton.textContent = 'Placing order...';
+  }
+
+  try{
+    const id = makeOrderId();
+    const items = Object.values(cart).map(x => ({
+      name: x.name,
+      price: x.price,
+      quantity: x.qty
+    }));
+    const total = cartTotal();
+
+    const customerName = document.getElementById('orderName').value.trim();
+    const customerPhone = document.getElementById('orderPhone').value.trim();
+    const customerEmail = document.getElementById('orderEmail').value.trim();
+    const orderType = document.getElementById('orderType').value;
+    const address = document.getElementById('orderAddress').value.trim();
+    const notes = document.getElementById('orderNotes').value.trim();
+
+    // Save the order to the central Supabase database.
+    // The "items" column in your orders table is JSONB.
+    const { data: savedOrder, error } = await supabaseClient
+      .from('orders')
+      .insert([{
+        order_id: id,
+        customer_name: customerName,
+        phone: customerPhone,
+        email: customerEmail || null,
+        order_type: orderType,
+        address: address,
+        notes: notes || null,
+        items: items,
+        total: total,
+        status: 'Pending'
+      }])
+      .select()
+      .single();
+
+    if(error){
+      console.error('Supabase order error:', error);
+      throw new Error(error.message || 'Could not save the order.');
+    }
+
+    // Keep a local copy for the existing owner UI as a convenience.
+    const localOrder = {
+      id: id,
+      name: customerName,
+      phone: customerPhone,
+      email: customerEmail,
+      address: address,
+      type: orderType,
+      notes: notes,
+      items: items.map(x => `${x.name} × ${x.quantity} (${x.price})`).join('\n'),
+      total: total,
+      status: 'Pending',
+      time: new Date().toLocaleString('en-IN')
+    };
+    ownerOrders.unshift(localOrder);
+    localStorage.setItem('rf_orders', JSON.stringify(ownerOrders));
+
+    // Keep the existing Netlify Forms submission as an additional notification channel.
+    document.getElementById('orderDetails').value =
+      items.map(x => `${x.name} × ${x.quantity} (${x.price})`).join('\n');
+    document.getElementById('orderTotal').value = '₹' + total;
+    document.getElementById('customerEmail').value = customerEmail;
+
+    try{
+      await fetch('/', {
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams(
+          new FormData(document.getElementById('orderForm'))
+        ).toString()
+      });
+    }catch(netlifyError){
+      console.warn('Netlify Forms notification failed, but the Supabase order was saved.', netlifyError);
+    }
+
+    finishOrder(id);
+  }catch(error){
+    console.error(error);
+    document.getElementById('checkoutMessage').innerHTML =
+      `<div class="success" style="background:#251414;border-color:#633;color:#ffd0d0">
+        <b>Order could not be placed.</b><br>
+        ${String(error.message || 'Please try again.').replace(/[<>&"]/g, '')}
+      </div>`;
+
+    if(submitButton){
+      submitButton.disabled = false;
+      submitButton.textContent = 'Place Order';
+    }
+  }
+}
+function finishOrder(id){
+  const order=ownerOrders.find(o=>o.id===id);
+  cart={};saveCart();
+  const waText = order
+    ? `*New Rahul Foods Order*%0AOrder ID: ${encodeURIComponent(order.id)}%0AName: ${encodeURIComponent(order.name)}%0AMobile: ${encodeURIComponent(order.phone)}%0AType: ${encodeURIComponent(order.type)}%0AAddress: ${encodeURIComponent(order.address)}%0AItems:%0A${encodeURIComponent(order.items)}%0ATotal: ₹${encodeURIComponent(order.total)}%0ANotes: ${encodeURIComponent(order.notes || 'None')}`
+    : '';
+  const waUrl = `https://wa.me/919948099296?text=${waText}`;
+  document.getElementById('checkoutMessage').innerHTML=`<div class="success"><b>Order placed successfully!</b><br>Your order ID is <b>${id}</b>.<br><span style="color:#9fd8aa">The order was submitted to the website.</span><div class="notify-actions"><a class="btn primary" href="${waUrl}" target="_blank" rel="noopener">Send Order on WhatsApp</a></div><div style="margin-top:10px;color:#999;font-size:12px">The WhatsApp button opens Rahul Foods' owner chat with the order details filled in. Tap Send to notify the owner.</div></div>`;
+  document.getElementById('orderForm').style.display='none';
+  setTimeout(()=>{closeModal('checkoutModal');document.getElementById('orderForm').reset();document.getElementById('orderForm').style.display='block';document.getElementById('checkoutMessage').innerHTML=''},8000);
+}
+function openOwner(){
+  let key=prompt('Enter owner dashboard PIN');
+  if(key!=='501301'){alert('Incorrect owner PIN.');return}
+  renderOwner();openModal('ownerModal');
+}
+function renderOwner(){
+  let el=document.getElementById('ownerOrders');
+  el.innerHTML=ownerOrders.length?ownerOrders.map(o=>`<div style="border:1px solid #2a2a2a;padding:14px;margin:10px 0;font:13px Arial">
+  <b style="color:var(--gold2)">${o.id}</b> · ${o.time}<br><b>${o.name}</b> · ${o.phone} · ${o.email}<br>${o.type} · ${o.address}<br><br>${String(o.items).replace(/\\n/g,'<br>')}<br><b>Total: ₹${o.total}</b><br>
+  <select onchange='setOrderStatus(${JSON.stringify(o.id)},this.value)' style="margin-top:10px;background:#090909;color:#fff;border:1px solid #333;padding:7px"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Accepted'?'selected':''}>Accepted</option><option ${o.status==='Preparing'?'selected':''}>Preparing</option><option ${o.status==='Ready'?'selected':''}>Ready</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option></select>
+  </div>`).join(''):'<div class="empty">No orders on this browser.</div>';
+}
+function setOrderStatus(id,status){let o=ownerOrders.find(x=>x.id===id);if(o){o.status=status;localStorage.setItem('rf_orders',JSON.stringify(ownerOrders));renderOwner()}}
+
+updateCartCount();updateAccountBar();render();
+</script>
+</body>
+</html>
